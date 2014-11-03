@@ -7,8 +7,18 @@
 //
 
 #import "AppDelegate.h"
+#import <CoreLocation/CoreLocation.h>
+#import "ParkingRecord.h"
 
-@interface AppDelegate ()
+static NSString *const UUID = @"E20A39F4-73F5-4BC4-A12F-17D1AD07A961";
+static NSString *const identifier = @"parking.beacon";
+static CLBeaconMajorValue major = 1000;
+static CLBeaconMinorValue minor = 2;
+
+@interface AppDelegate () <CLLocationManagerDelegate>
+
+@property CLBeaconRegion *beaconRegion;
+@property CLLocationManager *manager;
 
 @end
 
@@ -17,6 +27,23 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    
+    //Construct the region
+    self.beaconRegion = [[CLBeaconRegion alloc] initWithProximityUUID:[[NSUUID alloc] initWithUUIDString:UUID] major:major minor:minor identifier:identifier];
+    self.beaconRegion.notifyEntryStateOnDisplay = YES ;
+    self.beaconRegion.notifyOnExit = YES;
+    self.beaconRegion.notifyOnEntry = YES;
+    
+    //Start monitoring
+    self.manager = [[CLLocationManager alloc] init];
+    [self.manager setDelegate:self];
+    
+    
+    UIUserNotificationSettings* notificationSettings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound categories:nil];
+    [[UIApplication sharedApplication] registerUserNotificationSettings:notificationSettings];
+    
+    
+
     return YES;
 }
 
@@ -42,6 +69,78 @@
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     // Saves changes in the application's managed object context before the application terminates.
     [self saveContext];
+}
+
+#pragma mark - CLLocationManagerDelegate Methods
+
+- (void)startMonitor {
+    CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
+    if (status == kCLAuthorizationStatusNotDetermined) {
+        [self.manager requestAlwaysAuthorization];
+    }
+    [self.manager startMonitoringForRegion:self.beaconRegion];
+}
+
+- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
+    switch (status) {
+        case kCLAuthorizationStatusAuthorizedWhenInUse:
+        case kCLAuthorizationStatusAuthorizedAlways:
+            NSLog(@"Got authorization, start tracking location");
+            [self startMonitor];
+            break;
+        case kCLAuthorizationStatusNotDetermined:
+            [self.manager requestAlwaysAuthorization];
+        default:
+            break;
+    }
+}
+
+- (void)locationManager:(CLLocationManager *)manager didStartMonitoringForRegion:(CLRegion *)region
+{
+    //[self.manager requestStateForRegion:region];
+    NSLog(@"Started Monitoring for Beacon Region %@", region);
+}
+
+- (void)locationManager:(CLLocationManager *)manager didEnterRegion:(CLRegion *)region
+{
+    NSLog(@"Did enter region");
+    if ([region isKindOfClass:[CLBeaconRegion class]] && [CLLocationManager isRangingAvailable]) {
+        NSLog(@"%@", region);
+        [self postNotification:@"クルマに近づきました。"];
+        
+        ParkingRecord *record = (ParkingRecord *)[NSEntityDescription insertNewObjectForEntityForName:@"ParkingRecord" inManagedObjectContext:self.managedObjectContext];
+        NSDate *now =[NSDate date];
+        [record setDate:now];
+        [record setState:[NSNumber numberWithBool:YES]];
+        
+        NSError *error = nil;
+        [self.managedObjectContext save:&error];
+    }
+}
+
+- (void)locationManager:(CLLocationManager *)manager didExitRegion:(CLRegion *)region
+{
+    NSLog(@"Did Exit Region");
+    if ([region isKindOfClass:[CLBeaconRegion class]]) {
+        NSLog(@"%@", region);
+        [self postNotification:@"クルマから離れました。"];
+        ParkingRecord *record = (ParkingRecord *)[NSEntityDescription insertNewObjectForEntityForName:@"ParkingRecord" inManagedObjectContext:self.managedObjectContext];
+        NSDate *now =[NSDate date];
+        [record setDate:now];
+        [record setState:[NSNumber numberWithBool:NO]];
+        
+        NSError *error = nil;
+        [self.managedObjectContext save:&error];
+    }
+}
+
+- (void)postNotification:(NSString*)msg {
+    UILocalNotification *notification = [UILocalNotification new];
+    notification.soundName = UILocalNotificationDefaultSoundName;
+    
+    notification.alertBody = msg;
+    
+    [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
 }
 
 #pragma mark - Core Data stack

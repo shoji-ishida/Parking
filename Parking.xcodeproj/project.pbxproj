@@ -15,6 +15,7 @@
 		6233E2121A07219C006684A3 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6233E2111A07219C006684A3 /* Images.xcassets */; };
 		6233E2151A07219C006684A3 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6233E2131A07219C006684A3 /* LaunchScreen.xib */; };
 		6233E2211A07219C006684A3 /* ParkingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6233E2201A07219C006684A3 /* ParkingTests.m */; };
+		6233E22C1A077213006684A3 /* ParkingRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = 6233E22B1A077213006684A3 /* ParkingRecord.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,6 +43,8 @@
 		6233E21A1A07219C006684A3 /* ParkingTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ParkingTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6233E21F1A07219C006684A3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6233E2201A07219C006684A3 /* ParkingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ParkingTests.m; sourceTree = "<group>"; };
+		6233E22A1A077213006684A3 /* ParkingRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParkingRecord.h; sourceTree = "<group>"; };
+		6233E22B1A077213006684A3 /* ParkingRecord.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ParkingRecord.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,6 +86,8 @@
 		6233E2001A07219C006684A3 /* Parking */ = {
 			isa = PBXGroup;
 			children = (
+				6233E22A1A077213006684A3 /* ParkingRecord.h */,
+				6233E22B1A077213006684A3 /* ParkingRecord.m */,
 				6233E2051A07219C006684A3 /* AppDelegate.h */,
 				6233E2061A07219C006684A3 /* AppDelegate.m */,
 				6233E20B1A07219C006684A3 /* ViewController.h */,
@@ -171,6 +176,11 @@
 				TargetAttributes = {
 					6233E1FD1A07219C006684A3 = {
 						CreatedOnToolsVersion = 6.1;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+						};
 					};
 					6233E2191A07219C006684A3 = {
 						CreatedOnToolsVersion = 6.1;
@@ -224,6 +234,7 @@
 			files = (
 				6233E2071A07219C006684A3 /* AppDelegate.m in Sources */,
 				6233E20A1A07219C006684A3 /* Parking.xcdatamodeld in Sources */,
+				6233E22C1A077213006684A3 /* ParkingRecord.m in Sources */,
 				6233E20D1A07219C006684A3 /* ViewController.m in Sources */,
 				6233E2041A07219C006684A3 /* main.m in Sources */,
 			);
