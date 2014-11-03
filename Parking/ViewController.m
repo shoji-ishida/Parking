@@ -12,6 +12,7 @@
 
 @interface ViewController () <UITableViewDelegate, UITableViewDataSource>
 
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) NSArray *dataSource;
 
 @end
@@ -37,8 +38,8 @@
     self.dataSource = [managedObjectContext executeFetchRequest:fetchRequest error:nil];
 
     
-    //self.tableView.delegate = self;
-    //self.tableView.dataSource = self;
+    self.tableView.delegate = self;
+    self.tableView.dataSource = self;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -73,13 +74,13 @@
     BOOL flag = [record.state boolValue];
     NSString *state;
     if (flag == YES) {
-        state =@"クルマに近づきました。";
+        state =@"車に近づきました。";
     } else {
-        state =@"クルマから離れました。";
+        state =@"車から離れました。";
     }
     
     NSMutableString* message = [NSMutableString string];
-    [message appendString:[NSString stringWithFormat:@"時間：%@\n",date]];
+    [message appendString:[NSString stringWithFormat:@"%@ %@",date, state]];
     
     cell.textLabel.text = message;
     return cell;
