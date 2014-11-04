@@ -113,8 +113,9 @@ static CLBeaconMinorValue minor = 1;
         [record setDate:now];
         [record setState:[NSNumber numberWithBool:YES]];
         
-        NSError *error = nil;
-        [self.managedObjectContext save:&error];
+        [self saveContext];
+        //NSError *error = nil;
+        //[self.managedObjectContext save:&error];
     }
 }
 
@@ -129,8 +130,9 @@ static CLBeaconMinorValue minor = 1;
         [record setDate:now];
         [record setState:[NSNumber numberWithBool:NO]];
         
-        NSError *error = nil;
-        [self.managedObjectContext save:&error];
+        [self saveContext];
+        //NSError *error = nil;
+        //[self.managedObjectContext save:&error];
     }
 }
 
