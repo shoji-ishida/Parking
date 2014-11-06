@@ -7,8 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ParkingRecord.h"
 
-@interface ViewController : UIViewController
+@interface ViewController : UIViewController <NSFetchedResultsControllerDelegate>
+
+@property (nonatomic, strong) NSManagedObjectContext *managedObjectContext;
 
 
 @end

@@ -14,6 +14,7 @@ static NSString *const UUID = @"E20A39F4-73F5-4BC4-A12F-17D1AD07A961";
 static NSString *const identifier = @"parking.beacon";
 static CLBeaconMajorValue major = 1000;
 static CLBeaconMinorValue minor = 1;
+static NSDate *lastExit = nil;
 
 @interface AppDelegate () <CLLocationManagerDelegate>
 
@@ -114,14 +115,14 @@ static CLBeaconMinorValue minor = 1;
         [record setState:[NSNumber numberWithBool:YES]];
         
         [self saveContext];
-        //NSError *error = nil;
-        //[self.managedObjectContext save:&error];
-    }
+        [NSFetchedResultsController deleteCacheWithName:@"Root"];    }
 }
 
 - (void)locationManager:(CLLocationManager *)manager didExitRegion:(CLRegion *)region
 {
     NSLog(@"Did Exit Region");
+    lastExit = [NSDate date];
+    
     if ([region isKindOfClass:[CLBeaconRegion class]]) {
         NSLog(@"%@", region);
         [self postNotification:@"クルマから離れました。"];
@@ -131,8 +132,7 @@ static CLBeaconMinorValue minor = 1;
         [record setState:[NSNumber numberWithBool:NO]];
         
         [self saveContext];
-        //NSError *error = nil;
-        //[self.managedObjectContext save:&error];
+        [NSFetchedResultsController deleteCacheWithName:@"Root"];
     }
 }
 
